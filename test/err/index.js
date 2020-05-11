@@ -10,13 +10,13 @@ var pluginsrc = require('../..')
 
 test('No Config - {Error} - Load Plugins', function (t) {
   return pluginsrc({}, 'test').catch(function (err) {
-    t.is(err.message, 'No PostCSS Config found in: /home/travis/build/michael-ciniawsky/postcss-load-plugins/test')
+    t.is(/No PostCSS Config found in: (.*)\/postcss-load-plugins\/test/.test(err.message), true)
   })
 })
 
 test('No Plugin - {Error} - Load Plugins', function (t) {
   return pluginsrc({}, 'test/err/object').catch(function (err) {
-    t.is(err.message, "Loading PostCSS Plugin failed: Cannot find module 'no plugin'")
+    t.is(err.message.indexOf("Loading PostCSS Plugin failed: Cannot find module 'no plugin'") !== -1, true)
   })
 })
 
@@ -24,7 +24,7 @@ test('No Plugin (Options) - {Error} - Load Plugins', function (t) {
   var ctx = { next: 1 }
 
   return pluginsrc(ctx, 'test/err/object').catch(function (err) {
-    t.is(err.message, "Loading PostCSS Plugin failed: Cannot find module 'no plugin options'")
+    t.is(err.message.indexOf("Loading PostCSS Plugin failed: Cannot find module 'no plugin options'") !== -1, true)
   })
 })
 
