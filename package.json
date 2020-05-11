@@ -27,7 +27,7 @@
     "postcss-import": "^11.1.0",
     "postcss-nested": "^1.0.0",
     "postcss-sprites": "^4.2.0",
-    "standard": "^10.0.3",
+    "standard": "^14.3.4",
     "standard-changelog": "1.0.8",
     "sugarss": "^0.2.0"
   },
