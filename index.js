@@ -41,23 +41,31 @@ module.exports = function pluginsrc (ctx, path, options) {
 
   if (!ctx.env) process.env.NODE_ENV = 'development'
 
+  function handleResult (result) {
+    if (!result) throw new Error('No PostCSS Config found in: ' + path)
+
+    file = result ? result.filepath : ''
+
+    return result ? result.config : {}
+  }
+
+  function composePlugins (plugins) {
+    if (typeof plugins === 'function') plugins = plugins(ctx)
+    else plugins = assign(plugins, ctx)
+
+    if (!plugins.plugins) plugins.plugins = []
+
+    return { plugins: loadPlugins(plugins), file: file }
+  }
+
   var file
+
+  if (options.sync) {
+    return composePlugins(handleResult(config('postcss', options).load(path)))
+  }
 
   return config('postcss', options)
     .load(path)
-    .then(function (result) {
-      if (!result) throw new Error('No PostCSS Config found in: ' + path)
-
-      file = result ? result.filepath : ''
-
-      return result ? result.config : {}
-    })
-    .then(function (plugins) {
-      if (typeof plugins === 'function') plugins = plugins(ctx)
-      else plugins = assign(plugins, ctx)
-
-      if (!plugins.plugins) plugins.plugins = []
-
-      return { plugins: loadPlugins(plugins), file: file }
-    })
+    .then(handleResult)
+    .then(composePlugins)
 }
